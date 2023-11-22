@@ -1,0 +1,19 @@
+
+procedure insertEdge (input/output g: Graph, input prec, succ: integer)
+	KAMUS LOKAL
+	pnPrec, pnSucc: addrNode
+	
+	ALGORITMA
+	pnPrec <- searchNode(g, prec)
+	if (pnPrec = Nil) then
+		insertNode(g, prec, pnPrec)
+	
+	pnSucc <- searchNode(g, succ)
+	if (pnSucc = Nil) then
+		insertNode(g, succ, pnSucc)
+	
+	if (searchEdge(g, prec, succ) == Nil) then
+		pnPrec^.trail.succ <- pnSucc
+
+	
+	
