@@ -8,13 +8,40 @@ f = open(filename, "r")
 
 s = f.read()
 tags = re.findall(r'[^\n\t]+', s)
+print(tags)
+print()
 tags_real = []
 for lmao in tags:
-    tags = re.findall(r'<[^>]+>', lmao)
+    # print("-----------------------------------------------")
+    # print(lmao)
+    tags = re.findall(r'<[^>]+>', lmao) 
+    tags2 = re.findall(r'</\w+>\s*(.*)', lmao)
+    tags3 = []
+    if(tags2 != []):
+        tags3 = re.findall(r'\s*(.*)<\w+>', tags2[0])
+    tags4 = re.findall(r'(.*)<\w+>', lmao)
+    
+
+    tags2 = [x for x in tags2 if '<' not in x or '>' not in x]
+    tags3 = [x for x in tags3 if '<' not in x or '>' not in x]
+    tags4 = [x for x in tags4 if '<' not in x or '>' not in x]
+    # if
+    # print("2----", tags2) 
+    # print(tags3)
+    # print("4----", tags4)
     if tags == []:
         tags_real.append(lmao)
     else:
+        tags_real.extend(tags4)
+        if(len(tags2) == 0 or tags2[0] == ''):
+            tags_real.extend(tags3)
+        
         tags_real.extend(tags)
+        if(not(len(tags2) == 0 or tags2[0] == '')):
+            tags_real.extend(tags2)
+        # print(tags_real)
+
+
 #tags = re.findall(r'\n[^\n]+', s)
 print("tags_real:", tags_real)
 tags = map(lambda x: x.strip('\n').strip('\t'), tags_real)
@@ -33,16 +60,36 @@ map_val = {
     "</body>" : "bd",
     "<title>" : "T",
     "</title>" : "T",
-    "<link>" : "L",
-    "</link>" : "L",
+    "<link>" : "lk",
+    "</link>" : "lk",
     "<script>" : "s",
     "</script>" : "s",
+    "<h1>" : "h1",
+    "</h1>" : "h1",
+    "<h2>" : "h2",
+    "</h2>" : "h2",
+    "<h3>" : "h3",
+    "</h3>" : "h3",
+    "<h4>" : "h4",
+    "</h4>" : "h4",
+    "<h5>" : "h5",
+    "</h5>" : "h5",
+    "<h6>" : "h6",
+    "</h6>" : "h6",
     "<p>" : "p",
     "</p>" : "p",
     "<br>" : "br",
+    "<em>" : "em",
+    "</em>" : "em",
+    "<img>" : "img",
     "<div>" : "dv",
     "</div>" : "dv",
-    "<illegalStr>" : "str",
+    "<illegalStr>" : "ill",
+    "id=\"" : "id",
+    "class=\"": "cl",
+    "style=\"": "sl",
+    "src=\"": "sc",
+    "\"": "petik",
 }
 
 def printError(x, pos):
@@ -61,44 +108,55 @@ def printError(x, pos):
     print("+" + "-"*(len(x)+9 + len(str(i))) + "+")
     #print("-" * (pos) + "↑")
     print("Syntax Error" + Style.RESET_ALL)
+
+def printCorrent():
+    
+    # print err message
+    
+    print(Fore.GREEN + "+" + "-"*14 + "+")
+    print("| " + " " * 3+ "CORRECT" +"   |")
+    print("+" + "-"*14 + "+")
+    #print("-" * (pos) + "↑")
+    print("Syntax Checked" + Style.RESET_ALL)
         
 
-def validateGlob(search, glob_idStr):
-    result = [m.start() for m in re.finditer('(?=%s)(?!.{1,%d}%s)' % (search, len(search)-1, search), glob_idStr)]
-    #print(glob_idStr)
-    #print(result)
-    
-    isEqual = False
-    for x in result:
-        isEqual = False
-        char_temp = ""
-        haha = 0
-        state = False
-        for i in range(x, len(glob_idStr)):
-            if glob_idStr[i] == '=':
-                if(search != char_temp):
-                    print(search, char_temp)
-                    return False
-                else:
-                    char_temp = ""
-                    isEqual = True
-                    continue
-            elif glob_idStr[i] == '"':
-                haha+=1
-            else:
-                char_temp += glob_idStr[i]
-            
-            if haha == 2:
-                state = True
-                break
-            #print(glob_idStr[i])
-        if not state:
-            return False
-        #print(char_temp, haha, state)
-    if (result == [] or result == None):
-        return True
+# def validateGlob(search, glob_idStr):
 
-    return True and isEqual
+#     result = [m.start() for m in re.finditer('(?=%s)(?!.{1,%d}%s)' % (search, len(search)-1, search), glob_idStr)]
+#     print(glob_idStr)
+#     print(result)
+    
+    # isEqual = False
+    # for x in result:
+    #     isEqual = False
+    #     char_temp = ""
+    #     haha = 0
+    #     state = False
+    #     for i in range(x, len(glob_idStr)):
+    #         if glob_idStr[i] == '=':
+    #             if(search != char_temp):
+    #                 print(search, char_temp)
+    #                 return False
+    #             else:
+    #                 char_temp = ""
+    #                 isEqual = True
+    #                 continue
+    #         elif glob_idStr[i] == '"':
+    #             haha+=1
+    #         else:
+    #             char_temp += glob_idStr[i]
+            
+    #         if haha == 2:
+    #             state = True
+    #             break
+    #         #print(glob_idStr[i])
+    #     if not state:
+    #         return False
+    #     #print(char_temp, haha, state)
+    # if (result == [] or result == None):
+    #     return True
+
+    # return True and isEqual
 
 
 # ini TOKENIZER
@@ -107,35 +165,83 @@ ans = []
 for x in tags:
     temp = x[1:-1]
     temp = temp.split(' ')
-    # check illegal string
-    if('<'+temp[0]+'>' not in map_val and x[0] != '<'):
-        temp = ['illegalStr']
-    # check wrong tag name
-    if('<'+temp[0]+'>' not in map_val):
-        print('FAILED awikwok')
-        printError(x, 1)
-        exit()
-    
-    # check global identifier
-    glob_id = ''.join(temp[1:])
-    if glob_id != '':
-        xId = validateGlob('id', glob_id)
-        xClass = validateGlob('class', glob_id)
-        xStyle = validateGlob('style', glob_id)
+    # print(temp)
 
-        print(xId, xClass, xStyle)
-        if(not(xId and xClass and xStyle)):
-            print('Failed awikwok')
-            printError(x, 1)
-            exit()
 
-    # add to ans
+    # add ans
     x = '<' + temp[0] + '>'
     if x in map_val:
         ans.append(map_val[x])
-    #print(temp)
+    else:
+        ans.append(map_val['<illegalStr>'])
 
+    # cek global aatrbute
+    combined_right = ''.join(temp[1:])
+    # print(combined_right)
+    if(combined_right != ''):
+        anso = []
+        ch_temp = ''
+        count = 0
+        for x in combined_right:
+            if(x == '"'):
+                count += 1
+            if(count == 2):
+                anso.append(ch_temp)
+                ch_temp = ''
+                count = 0
+                anso.append('"')
+            else:
+                ch_temp += x
+        if(ch_temp != ''):
+            anso.append(ch_temp)
 
+        # print(anso)
+
+        # print(ans)
+        for lmao in anso:
+            if(lmao != '"'):
+                temp_lmao = lmao.split("\"")
+                temp_lmao = temp_lmao[0] + "\""
+                if(temp_lmao in map_val):
+                    ans.append(map_val[temp_lmao])
+                else:
+                    ans.append(map_val['<illegalStr>'])
+            elif(lmao == '"'):
+                if(lmao in map_val):
+                    ans.append(map_val[lmao])
+
+        # temp2 = combined_right.split('"')
+        # print(temp2)
+        
+            
+        print("-----")
+        # check illegal string
+        # if('<'+temp[0]+'>' not in map_val and x[0] != '<'):
+        #     temp = ['illegalStr']
+        # # check wrong tag name
+        # if('<'+temp[0]+'>' not in map_val):
+        #     print('FAILED awikwok')
+        #     printError(x, 1)
+        #     exit()
+        
+        # # check global identifier
+        # glob_id = ''.join(temp[1:])
+        # if glob_id != '':
+        #     xId = validateGlob('id', glob_id)
+        #     xClass = validateGlob('class', glob_id)
+        #     xStyle = validateGlob('style', glob_id)
+
+        #     print(xId, xClass, xStyle)
+        #     if(not(xId and xClass and xStyle)):
+        #         print('Failed awikwok')
+        #         printError(x, 1)
+        #         exit()
+
+        # # add to ans
+        # #print(temp)
+
+print(ans)
+# exit()
 # initiate the machine
 map_transition = {}
 
@@ -216,7 +322,7 @@ def travRec(currentState, isi_stack, ans, count):
     print('ini lmao:',lmao)
     print('ini lmao2:',lmao2)
     for elements in lmao2:
-        print(elements)
+        print("n element:", elements)
         if (lmao2[-1] == 'e'):
             isi_stack.pop(0)
         elif (',' in lmao2[-1]):
@@ -235,13 +341,14 @@ if __name__ == "__main__":
     hahahihi, loc = travRec(currentState, isi_stack, ans, 0)
     print(loc)
     if (hahahihi):
-        print(Fore.GREEN + str(hahahihi) + Style.RESET_ALL)
+        printCorrent()
+        # print(Fore.GREEN + str(hahahihi) + Style.RESET_ALL)
     else:
         key_list = list(map_val.keys())
         val_list = list(map_val.values())
 
         # print key with val 100
-        print(arr_temp[loc])
+        # print(arr_temp[loc])
         #position = val_list.index(arr_temp[loc])
         #print(position)
         #ash = key_list[position]
@@ -256,7 +363,7 @@ if __name__ == "__main__":
         #printError(key_list[position], 1)
         #printError(ash, 1)
         
-        printError(arr_temp[loc], 1)
+        # printError(arr_temp[loc], 1)
         printError(isi_stack[0], 1)
         exit()
         
