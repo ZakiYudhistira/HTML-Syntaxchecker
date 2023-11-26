@@ -39,7 +39,7 @@ for lmao in tags:
         tags_real.extend(tags)
         if(not(len(tags2) == 0 or tags2[0] == '')):
             tags_real.extend(tags2)
-        # print(tags_real)
+    print(tags_real)
 
 
 #tags = re.findall(r'\n[^\n]+', s)
@@ -296,7 +296,7 @@ for x in tags:
         # #print(temp)
 
 print(ans)
-exit()
+# exit()
 # initiate the machine
 map_transition = {}
 
