@@ -21,6 +21,10 @@ Berikut adalah repository program HTML Syntax checker. Program ini berfungsi unt
 ### Prasyarat
 
 - [Python](https://www.python.org/) (3.6 atau lebih baru)
+- Library python
+  argparse `pip install argparse`
+  colorama `pip install colorama`
+  re `pip install re`
 
 ### Susunan Program
 
