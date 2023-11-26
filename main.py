@@ -98,44 +98,47 @@ class App:
         self.ans = []
         self.map_transition = {}
 
-        self.isi_stack = ['Z']
-        self.currentState = 'Q'
+        self.isi_stack = []
+        self.currentState = ''
+        self.endState = ''
 
         self.loadFiles()
         self.html_parser(self.htmlfile)
 
         self.tags = map(lambda x: x.strip('\n').strip('\t'), self.tags_real)
         self.tags = list(filter(None, self.tags))
-        print(self.tags)
+        # print(self.tags)
 
         self.arr_temp.extend(self.tags)
 
         self.tokenizer()
 
-        exit()
+        # exit()
         self.parsePDA(self.pdafile)
+        # print("====================== ", self.currentState, self.endState, self.ans)
         self.ans.append('e')
 
         hahahihi, loc = self.travRec(self.currentState, self.isi_stack, self.ans, 0)
-        print(loc)
+        # print("location ------------------", loc)
         if (hahahihi):
             self.printCorrent()
             # print(Fore.GREEN + str(hahahihi) + Style.RESET_ALL)
         else:
             key_list = list(self.map_val.keys())
             val_list = list(self.map_val.values())
-        
-        self.printError(self.isi_stack[0], 1)
+            
+
+            self.printError(self.isi_stack[0], loc)
         exit()
     
     def travRec(self, currentState, isi_stack, ans, count):
-        print(currentState, isi_stack, ans)
+        # print(currentState, isi_stack, ans)
         # basis
-        if (currentState == 'F' and not ans):
+        if (currentState == self.endState and not ans):
             return True, 0
-        if (currentState == 'F' and ans):
+        if (currentState == self.endState and ans):
             return False, 0
-        if (not ans and currentState != 'F'):
+        if (not ans and currentState != self.endState):
             return False, 0
 
         # kalau inputan ga ada di map kita --> invalid
@@ -146,41 +149,57 @@ class App:
 
         # cek input
         lmao = temp.get(ans[0])
-        print("lmao:", lmao)
+        # print("lmao:", lmao)
 
         if (lmao == None):
             return False, count
         
         # cek top stack
         lmao2 = lmao.get(isi_stack[0])
-        print("lmao-2:", lmao2)
+        # print("lmao-2:", lmao2)
         
         if (lmao2 == None):
             lmao2 = lmao.get('e')
             if(lmao2 == None):
                 return False, count
-        print("--------------------", currentState, ans[0], isi_stack[0]) 
-        print('ini lmao:',lmao)
-        print('ini lmao2:',lmao2)
+        # print("--------------------", currentState, ans[0], isi_stack[0]) 
+        # print('ini lmao:',lmao)
+        # print('ini lmao2:',lmao2)
         for elements in lmao2:
-            print("n element:", elements)
+            # print("n element:", elements)
             if (lmao2[-1] == 'e'):
                 isi_stack.pop(0)
             elif (',' in lmao2[-1]):
-                print("push stack")
+                # print("push stack")
                 isi_stack.insert(0, ans[0])
             currentState = lmao2[0]
             ans.pop(0)
             count += 1
 
             x, count = self.travRec(currentState, isi_stack, ans, count)
-            print(currentState, isi_stack, ans)
-            print(x)
+            # print(currentState, isi_stack, ans)
+            # print(x)
             return x, count
 
     def parsePDA(self, rules):
         rules = open(rules, 'r')
+        i = 1
         for line in rules:
+            if (i == 4):
+                self.currentState = line.strip('\n')
+                i+=1
+                continue
+            elif (i==5) :
+                self.isi_stack.append(line.strip('\n'))
+                i+=1
+                continue
+            elif (i == 6):
+                self.endState = line.strip('\n')
+                i+=1
+                continue
+            elif (i < 4):
+                i+=1
+                continue
             # print(line)
             map_temp = {}
             map_temp2 = {}
@@ -208,8 +227,8 @@ class App:
             # json_string = json.dumps(map_transition, indent=4)
             # print(json_string)
             # print("-----------------------------------------------")
-
-        print(self.map_transition)
+            i+=1
+        # print(self.map_transition)
         rules.close()
     
     def tokenizer(self):
@@ -236,7 +255,7 @@ class App:
 
             # cek global aatrbute
             combined_right = ''.join(temp[1:])
-            print(combined_right)
+            # print(combined_right)
             if(combined_right != ''):
                 anso = []
                 ch_temp = ''
@@ -254,7 +273,7 @@ class App:
                 if(ch_temp != ''):
                     anso.append(ch_temp)
 
-                print(anso)
+                # print(anso)
 
                 # print(ans)
                 for lmao in anso:
@@ -274,13 +293,13 @@ class App:
                         if(lmao in self.map_val):
                             self.ans.append(self.map_val[lmao])
 
-                print("-----")
+                # print("-----")
 
-        print(self.ans)
+        # print(self.ans)
 
     def printError(self, x, pos):
         # check in file which line
-        f = open("index.html", "r")
+        f = open(self.htmlfile, "r")
         i = 1
         for line in f:
             if x in line:
@@ -306,8 +325,8 @@ class App:
         f = open(htmlfile, "r")
         s = f.read()
         tags = re.findall(r'[^\n\t]+', s)
-        print(tags)
-        print()
+        # print(tags)
+        # print()
         for lmao in tags:
             # print("-----------------------------------------------")
             # print(lmao)
@@ -348,7 +367,7 @@ class App:
         self.pdafile = args.pda_file
         self.htmlfile = args.html_file
         
-        print(self.pdafile)
-        print(self.htmlfile)
+        # print(self.pdafile)
+        # print(self.htmlfile)
 
 App()
