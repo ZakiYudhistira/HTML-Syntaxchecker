@@ -2,7 +2,9 @@
 <p align="center">
     <h1 align="center">HTML VALIDITY CHECKER/h3>
 </p>
-Berikut adalah repository program HTML Syntax checker. Program ini berfungsi untuk menentukan validitas suatu kode HTML. Program ini meninjau struktur elemen-elemen dari file HTML dan menggunakan pushdown automata untuk melakukan pengecekan.
+
+## Overview
+Berikut adalah repository program HTML Syntax checker. Program ini berfungsi untuk menentukan validitas suatu kode HTML. Program ini meninjau struktur elemen-elemen dari file HTML dan menggunakan pushdown automata untuk melakukan pengecekan.`
 
 ## Kontributor:
 | NIM      | Name                      | Task Allocation  |
@@ -24,6 +26,7 @@ Berikut adalah repository program HTML Syntax checker. Program ini berfungsi unt
 
 ### Susunan Program
 
+"""
 ├── README.md
 ├── main.py
 ├── pda.txt
@@ -35,3 +38,4 @@ Berikut adalah repository program HTML Syntax checker. Program ini berfungsi unt
 │   └── script.py
 └── test
     └── index.html
+"""
