@@ -1,6 +1,6 @@
 # Tugas Besar TBFO IF2124
-<h1 align="center">HTML VALIDITY CHECKER<h1/>
-
+<h1 align="center">HTML VALIDITY CHECKER</h1>
+<p align="center">Disusun oleh kelompok BPJS K01 IF 22</p> 
 ## Overview
 Berikut adalah repository program HTML Syntax checker. Program ini berfungsi untuk menentukan validitas suatu kode HTML. Program ini meninjau struktur elemen-elemen dari file HTML dan menggunakan pushdown automata untuk melakukan pengecekan.`
 
