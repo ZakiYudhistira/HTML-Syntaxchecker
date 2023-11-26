@@ -1,7 +1,5 @@
 # Tugas Besar TBFO IF2124
-<p align="center">
-    <h1 align="center">HTML VALIDITY CHECKER/h3>
-</p>
+<h1 align="center">HTML VALIDITY CHECKER<h1/>
 
 ## Overview
 Berikut adalah repository program HTML Syntax checker. Program ini berfungsi untuk menentukan validitas suatu kode HTML. Program ini meninjau struktur elemen-elemen dari file HTML dan menggunakan pushdown automata untuk melakukan pengecekan.`
@@ -26,7 +24,7 @@ Berikut adalah repository program HTML Syntax checker. Program ini berfungsi unt
 
 ### Susunan Program
 
-"""
+```
 ├── README.md
 ├── main.py
 ├── pda.txt
@@ -38,4 +36,4 @@ Berikut adalah repository program HTML Syntax checker. Program ini berfungsi unt
 │   └── script.py
 └── test
     └── index.html
-"""
+```
