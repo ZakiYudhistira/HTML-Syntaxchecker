@@ -81,6 +81,30 @@ map_val = {
     "<br>" : "br",
     "<em>" : "em",
     "</em>" : "em",
+    "<b>" : "b",
+    "</b" : "b",
+    "<abbr>": "ab",
+    "</abbr>": "ab",
+    "<strong>" : "str",
+    "</strong>" : "str",
+    "<small>" : "sm",
+    "</small>" : "sm",
+    "<hr>" : "hr",
+    "<a>" : "a",
+    "</a>" : "a",
+    "<button>" : "bt",
+    "</button>" : "bt",
+    "<form>" : "f",
+    "</form>" : "f",
+    "<input>" : "in",
+    "<table>" : "tbl",
+    "</table>" : "tbl",
+    "<tr>" : "tr",
+    "</tr>" : "tr",
+    "<td>" : "td",
+    "</td>" : "td",
+    "<th>" : "th",
+    "</th>" : "th",
     "<img>" : "img",
     "<div>" : "dv",
     "</div>" : "dv",
@@ -90,6 +114,23 @@ map_val = {
     "style=\"": "sl",
     "src=\"": "sc",
     "\"": "petik",
+    'rel=\"' : "re",
+    'href=\"' : "hf",
+    'alt=\"' : "at",
+    'type=\"submit' : "tb",
+    'type=\"reset' : "tb",
+    'type=\"button' : "tb",
+    'type=\"text' : "ti",
+    'type=\"password' : "ti",
+    'type=\"email' : "ti",
+    'type=\"number' : "ti",
+    'type=\"checkbox' : "ti",
+    'action=\"' : "an",
+    'method=\"GET' : "md",
+    'method=\"POST' : "md",
+    'src=\"' : "sc",
+    '<!--' : "comment",
+    '-->' : "comment",
 }
 
 def printError(x, pos):
@@ -167,6 +208,15 @@ for x in tags:
     temp = temp.split(' ')
     # print(temp)
 
+    if(x[0:4] == '<!--'):
+        ans.append('comment')
+        if(x[-3:] == '-->'):
+            ans.append('comment')
+            continue
+        else:
+            ans.append(map_val['<illegalStr>'])
+            continue
+    # print(x[0:4], x[-3:])
 
     # add ans
     x = '<' + temp[0] + '>'
@@ -177,7 +227,7 @@ for x in tags:
 
     # cek global aatrbute
     combined_right = ''.join(temp[1:])
-    # print(combined_right)
+    print(combined_right)
     if(combined_right != ''):
         anso = []
         ch_temp = ''
@@ -195,11 +245,16 @@ for x in tags:
         if(ch_temp != ''):
             anso.append(ch_temp)
 
-        # print(anso)
+        print(anso)
 
         # print(ans)
         for lmao in anso:
-            if(lmao != '"'):
+            if('method' in lmao or 'type' in lmao):
+                if(lmao in map_val):
+                    ans.append(map_val[lmao])
+                else:
+                    ans.append(map_val['<illegalStr>'])
+            elif(lmao != '"'):
                 temp_lmao = lmao.split("\"")
                 temp_lmao = temp_lmao[0] + "\""
                 if(temp_lmao in map_val):
@@ -241,7 +296,7 @@ for x in tags:
         # #print(temp)
 
 print(ans)
-# exit()
+exit()
 # initiate the machine
 map_transition = {}
 
